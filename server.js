@@ -2,10 +2,41 @@ const express = require('express');
 const app = express();
 const port = process.env.SERVERPORT || 3001;
 const cors = require('cors')
+const bodyParser = require('body-parser');
+const Pool = require('pg').Pool;
+const pool = new Pool({
+    user: process.env.DBUSER,
+    host: process.env.DBHOST,
+    database: process.env.DB,
+    password: process.env.DBPASSWORD,
+    port: process.env.DBPORT
+})
 require('dotenv').config();
+
+
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(
+    bodyParser.urlencoded({
+        extended: true,
+    })
+)
+
+app.get('/', (req, res) => {
+    res.json({info: 'cloostermans main server'});
+});
+
+const getShops = (req, res) => {
+    pool.query('SELECT * FROM shops ORDER BY id ASC', (error, results) => {
+        if(error) {
+            throw error;
+        }
+        res.status(200).json(results.rows);
+    }
+)
+}
 
 app.post('/sf/main', (req, res) => {
     const receivedData = req.body;
