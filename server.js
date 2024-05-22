@@ -56,7 +56,7 @@ const createShop = (req, res) => {
         if(error) {
             throw error;
         }
-        res.status(200).send()
+        res.status(201).send(`Shop added with ID: ${results.rows[0].id}`);
     })
 }
 
